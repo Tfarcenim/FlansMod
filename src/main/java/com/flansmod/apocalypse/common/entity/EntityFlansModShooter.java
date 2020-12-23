@@ -35,7 +35,7 @@ import com.flansmod.common.vector.Vector3f;
 
 public class EntityFlansModShooter extends EntityMob implements IRangedAttackMob
 {
-	private EntityAIAttackRangedBow aiArrowAttack = new EntityAIAttackRangedBow(this, 1.0D, 20, 70.0F);
+	private final EntityAIAttackRangedBow aiArrowAttack = new EntityAIAttackRangedBow(this, 1.0D, 20, 70.0F);
 	public ItemStack[] ammoStacks;
 	public float shootDelay = 0;
 	public float minigunSpeed = 0.0F;
@@ -233,7 +233,7 @@ public class EntityFlansModShooter extends EntityMob implements IRangedAttackMob
 					ShootableType newBulletType = ((ItemShootable)newBulletStack.getItem()).type;
 					//Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
 					if(bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((ItemShootable)bulletStack.getItem()).type.dropItemOnReload != null && !creative)
-						item.dropItem(world, this, ((ItemShootable)bulletStack.getItem()).type.dropItemOnReload);
+						ItemGun.dropItem(world, this, ((ItemShootable)bulletStack.getItem()).type.dropItemOnReload);
 					
 					//Load the new magazine
 					ItemStack stackToLoad = newBulletStack.copy();

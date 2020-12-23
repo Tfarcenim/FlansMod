@@ -223,13 +223,10 @@ public class PlayerData
 		if(slot - 1 == player.inventory.currentItem)
 			return false;
 		ItemStack stackInSlot = player.inventory.getStackInSlot(slot - 1);
-		if(stackInSlot == null)
-			return false;
-		if(stackInSlot.getItem() instanceof ItemGun)
+			if(stackInSlot.getItem() instanceof ItemGun)
 		{
 			ItemGun item = ((ItemGun)stackInSlot.getItem());
-			if(item.GetType().oneHanded)
-				return true;
+				return item.GetType().oneHanded;
 		}
 		return false;
 	}

@@ -68,7 +68,7 @@ import com.flansmod.common.vector.Vector3f;
 public class ItemGun extends Item implements IPaintableItem
 {
 	
-	private GunType type;
+	private final GunType type;
 	
 	public GunType GetType()
 	{
@@ -129,7 +129,7 @@ public class ItemGun extends Item implements IPaintableItem
 		if(!gun.hasTagCompound())
 		{
 			gun.setTagCompound(new NBTTagCompound());
-			return ItemStack.EMPTY.copy();
+			return ItemStack.EMPTY;
 		}
 		//If the gun has no ammo tags, give it some
 		if(!gun.getTagCompound().hasKey("ammo"))
@@ -140,7 +140,7 @@ public class ItemGun extends Item implements IPaintableItem
 				ammoTagsList.appendTag(new NBTTagCompound());
 			}
 			gun.getTagCompound().setTag("ammo", ammoTagsList);
-			return ItemStack.EMPTY.copy();
+			return ItemStack.EMPTY;
 		}
 		//Take the list of ammo tags
 		NBTTagList ammoTagsList = gun.getTagCompound().getTagList("ammo", Constants.NBT.TAG_COMPOUND);
@@ -323,8 +323,8 @@ public class ItemGun extends Item implements IPaintableItem
 		PlayerData data = PlayerHandler.getPlayerData(player);
 		//Slow down minigun
 		data.minigunSpeed *= 0.9f;
-		Boolean hold = GetMouseHeld(hand);
-		Boolean held = GetLastMouseHeld(hand);
+		boolean hold = GetMouseHeld(hand);
+		boolean held = GetLastMouseHeld(hand);
 		
 		// Do not shoot ammo bags, flags or dropped gun items
 		if(mc.objectMouseOver != null && (mc.objectMouseOver.entityHit instanceof EntityFlagpole || mc.objectMouseOver.entityHit instanceof EntityFlag || mc.objectMouseOver.entityHit instanceof EntityGunItem || (mc.objectMouseOver.entityHit instanceof EntityGrenade && ((EntityGrenade)mc.objectMouseOver.entityHit).type.isDeployableBag)))
@@ -434,11 +434,8 @@ public class ItemGun extends Item implements IPaintableItem
 	{
 		ItemStack main = player.getHeldItemMainhand();
 		ItemStack off = player.getHeldItemOffhand();
-		Boolean hasItemInBothHands = !main.isEmpty() && !off.isEmpty();
-		if(hasItemInBothHands && !type.oneHanded)
-			return true;
-		
-		return false;
+		boolean hasItemInBothHands = !main.isEmpty() && !off.isEmpty();
+			return hasItemInBothHands && !type.oneHanded;
 	}
 	
 	public void shoot(EnumHand hand, EntityPlayer player, ItemStack gunstack, PlayerData data, World world, @Nullable GunAnimations animations)
@@ -490,7 +487,7 @@ public class ItemGun extends Item implements IPaintableItem
 				}
 				
 				final ItemStack bullet = bulletStack;
-				final Integer bulletid = bulletID;
+				final int bulletid = bulletID;
 				
 				ItemShootable shootableItem = (ItemShootable)bulletStack.getItem();
 				ShootableType shootableType = shootableItem.type;
@@ -528,7 +525,7 @@ public class ItemGun extends Item implements IPaintableItem
 					if (world.isRemote)
 					{	
 						
-						Integer bulletAmount = type.numBullets*shootableType.numBullets;
+						int bulletAmount = type.numBullets*shootableType.numBullets;
 						for(int i = 0; i < bulletAmount; i++)
 						{
 							//Smooth effects, no need to wait for the server response
@@ -536,7 +533,7 @@ public class ItemGun extends Item implements IPaintableItem
 						}
 						
 						animations.doShoot(type.getPumpDelay(), type.getPumpTime());
-						Float recoil = type.getRecoil(gunstack);
+						float recoil = type.getRecoil(gunstack);
 						FlansModClient.playerRecoil += recoil;
 						animations.recoil += recoil;
 						
@@ -712,7 +709,7 @@ public class ItemGun extends Item implements IPaintableItem
 			ItemStack bulletStack = getBulletItemStack(gunstack, i);
 			
 			//If there is no magazine, if the magazine is empty or if this is a forced reload
-			if(bulletStack == null || bulletStack.isEmpty() || bulletStack.getItemDamage() == bulletStack.getMaxDamage() || forceReload)
+			if(bulletStack.isEmpty() || bulletStack.getItemDamage() == bulletStack.getMaxDamage() || forceReload)
 			{
 				//Iterate over all inventory slots and find the magazine / bullet item with the most bullets
 				int bestSlot = -1;
@@ -737,14 +734,14 @@ public class ItemGun extends Item implements IPaintableItem
 					ShootableType newBulletType = ((ItemShootable)newBulletStack.getItem()).type;
 					
 					//Unload the old magazine (Drop an item if it is required and the player is not in creative mode)
-					if(bulletStack != null && bulletStack.getItem() instanceof ItemShootable && ((ItemShootable)bulletStack.getItem()).type.dropItemOnReload != null && !isCreative && bulletStack.getItemDamage() == bulletStack.getMaxDamage())
+					if(bulletStack.getItem() instanceof ItemShootable && ((ItemShootable) bulletStack.getItem()).type.dropItemOnReload != null && !isCreative && bulletStack.getItemDamage() == bulletStack.getMaxDamage())
 					{
 						if(!world.isRemote)
 							dropItem(world, entity, ((ItemShootable)bulletStack.getItem()).type.dropItemOnReload);
 					}
 					
 					//The magazine was not finished, pull it out and give it back to the player or, failing that, drop it
-					if(bulletStack != null && !bulletStack.isEmpty() && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
+					if(!bulletStack.isEmpty() && bulletStack.getItemDamage() < bulletStack.getMaxDamage())
 					{
 						if(!InventoryHelper.addItemStackToInventory(inventory, bulletStack, isCreative))
 						{

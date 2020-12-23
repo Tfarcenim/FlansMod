@@ -56,8 +56,8 @@ public class PacketReload extends PacketBase
 		ItemStack main = playerEntity.getHeldItemMainhand();
 		ItemStack off = playerEntity.getHeldItemOffhand();
 		ItemStack stack = isOffHand ? off : main;
-		boolean hasOffHand = main != null && !main.isEmpty() && off != null && !off.isEmpty();
-		if(data != null && stack != null && stack.getItem() instanceof ItemGun)
+		boolean hasOffHand = !main.isEmpty() && !off.isEmpty();
+		if(data != null && stack.getItem() instanceof ItemGun)
 		{
 			GunType type = ((ItemGun)stack.getItem()).GetType();
 			
