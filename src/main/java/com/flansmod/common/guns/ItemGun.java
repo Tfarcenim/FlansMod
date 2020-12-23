@@ -211,8 +211,8 @@ public class ItemGun extends Item implements IPaintableItem
 		if(type.deployable)
 		{
 			//Raytracing
-			float cosYaw = MathHelper.cos(-entityplayer.rotationYaw * 0.01745329F - 3.141593F);
-			float sinYaw = MathHelper.sin(-entityplayer.rotationYaw * 0.01745329F - 3.141593F);
+			float cosYaw = MathHelper.cos((float) (-entityplayer.rotationYaw * 0.01745329F - Math.PI));
+			float sinYaw = MathHelper.sin((float) (-entityplayer.rotationYaw * 0.01745329F - Math.PI));
 			float cosPitch = -MathHelper.cos(-entityplayer.rotationPitch * 0.01745329F);
 			float sinPitch = MathHelper.sin(-entityplayer.rotationPitch * 0.01745329F);
 			double length = 5D;
@@ -235,13 +235,15 @@ public class ItemGun extends Item implements IPaintableItem
 						{
 							j--;
 						}
-						if(isSolid(world, i, j, k) &&
+							int x = i + (playerDir == 1 ? 1 : 0) - (playerDir == 3 ? 1 : 0);
+							int z = k - (playerDir == 0 ? 1 : 0) + (playerDir == 2 ? 1 : 0);
+							if(isSolid(world, i, j, k) &&
 								(world.getBlockState(new BlockPos(i, j + 1, k)).getBlock() == Blocks.AIR || world.getBlockState(new BlockPos(i, j + 1, k)).getBlock() == Blocks.SNOW)
 								&&
-								(world.getBlockState(new BlockPos(i + (playerDir == 1 ? 1 : 0) - (playerDir == 3 ? 1 : 0), j + 1, k - (playerDir == 0 ? 1 : 0) + (playerDir == 2 ? 1 : 0))).getBlock() == Blocks.AIR)
+								(world.getBlockState(new BlockPos(x, j + 1, z)).getBlock() == Blocks.AIR)
 								&&
-								(world.getBlockState(new BlockPos(i + (playerDir == 1 ? 1 : 0) - (playerDir == 3 ? 1 : 0), j, k - (playerDir == 0 ? 1 : 0) + (playerDir == 2 ? 1 : 0))).getBlock() == Blocks.AIR
-										|| world.getBlockState(new BlockPos(i + (playerDir == 1 ? 1 : 0) - (playerDir == 3 ? 1 : 0), j, k - (playerDir == 0 ? 1 : 0) + (playerDir == 2 ? 1 : 0))).getBlock() == Blocks.SNOW))
+								(world.getBlockState(new BlockPos(x, j, z)).getBlock() == Blocks.AIR
+										|| world.getBlockState(new BlockPos(x, j, z)).getBlock() == Blocks.SNOW))
 						{
 							for(EntityMG mg : EntityMG.mgs)
 							{
